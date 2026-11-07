@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loadout Bench</title>
+<style>
+:root{--bg:#1d211a;--panel:#292e24;--ink:#ebe6d3;--mute:#a1a58f;--line:#454b3b;--part:#3a4031;--coy:#c9a672;--blaze:#ff6a2b;--ok:#9dbf6a;--hd:"Bahnschrift","Barlow Condensed","Arial Narrow",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+h1,h2,.slot b,.price,.stat b{font-family:var(--hd)}
+header{padding:14px 20px 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+h1{margin:0;font-size:32px}header .sp{flex:1}
+.app{display:grid;grid-template-columns:340px 1fr 320px;gap:14px;padding:12px 20px 24px}
+@media(max-width:1000px){.app{grid-template-columns:1fr}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0}
+h2{margin:0 0 10px;font-size:22px}
+.kit{display:grid;grid-template-columns:1fr 100px 1fr;gap:8px;align-items:center}
+.col{display:flex;flex-direction:column;gap:8px}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+.slot{cursor:pointer;text-align:left;border:1px solid var(--line);border-radius:4px;padding:6px 8px;background:var(--bg);min-height:50px}
+.slot b{display:block;font-size:15px}.slot span{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot.on{border-color:var(--blaze);box-shadow:inset 3px 0 0 var(--blaze)}.slot.has span{color:var(--ink)}
+:focus-visible{outline:2px solid var(--blaze);outline-offset:2px}
+svg{width:100%;height:auto}
+svg [data-s]{fill:var(--part);stroke:var(--line);cursor:pointer}svg [data-s].has{fill:var(--coy)}svg [data-s].on{stroke:var(--blaze);stroke-width:2.5}svg .st{fill:var(--part);stroke:var(--line)}
+.items{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.item{cursor:pointer;text-align:left;display:grid;grid-template-columns:1fr auto;gap:2px 12px;border:1px solid var(--line);border-radius:4px;padding:9px 12px;background:var(--bg)}
+.item:hover{border-color:var(--coy)}.item.picked{border-color:var(--blaze);box-shadow:inset 3px 0 0 var(--blaze)}
+.m,.w{color:var(--mute);font-size:13px}.price{font-size:20px;text-align:right}.w{text-align:right}
+.item a{color:var(--mute);font-size:13px;grid-column:1/3}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px}.stat b{display:block;font-size:26px;line-height:1.1}.stat span{color:var(--mute);font-size:12px}
+.warn{border-left:3px solid var(--blaze);padding:6px 10px;margin:0 0 10px;background:var(--bg);font-size:13px}.warn.ready{border-left-color:var(--ok)}
+ul{list-style:none;margin:0 0 10px;padding:0;font-size:14px}ul li{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:6px 8px;min-width:0}input{flex:1}
+.b{font-family:var(--hd);font-weight:600;cursor:pointer;background:var(--ink);color:var(--bg);border:0;border-radius:4px;padding:7px 12px}.b.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.hint{color:var(--mute);font-size:12px;margin:4px 0}.err{color:var(--blaze)}
+details{margin-top:12px}summary{cursor:pointer;font-weight:600}
+.saved{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.shop{display:flex;gap:6px;align-items:center;font-size:13px;padding:3px 0}.shop span{flex:1;overflow:hidden;text-overflow:ellipsis}
+</style></head><body>
+<header><h1>Loadout Bench</h1><span class="sp"></span>
+<label>Currency <select id="cur"></select></label><span class="hint" id="fx"></span></header>
+<main class="app">
+<section class="box"><h2>Operator</h2><div class="kit"><div class="col" id="colL"></div>
+<svg viewBox="0 0 120 240" role="img" aria-label="Operator figure">
+<rect class="st" x="24" y="54" width="12" height="64" rx="6"/><rect class="st" x="84" y="54" width="12" height="64" rx="6"/><rect class="st" x="42" y="120" width="15" height="100" rx="6"/><rect class="st" x="63" y="120" width="15" height="100" rx="6"/>
+<circle data-s="head" cx="60" cy="30" r="18"/><rect data-s="face" x="46" y="36" width="28" height="12" rx="5"/><rect data-s="eyes" x="43" y="23" width="34" height="9" rx="4"/>
+<rect data-s="rig" x="38" y="52" width="44" height="68" rx="8"/><circle data-s="hands" cx="30" cy="126" r="8"/><circle data-s="hands" cx="90" cy="126" r="8"/>
+<rect data-s="feet" x="36" y="218" width="24" height="14" rx="4"/><rect data-s="feet" x="60" y="218" width="24" height="14" rx="4"/>
+<rect data-s="sidearm" x="80" y="150" width="14" height="10" rx="2"/><rect data-s="primary" x="12" y="92" width="96" height="8" rx="2" transform="rotate(-18 60 96)"/></svg>
+<div class="col" id="colR"></div></div></section>
+
+<section class="box"><h2 id="catTitle">Gear</h2><div class="items" id="items"></div>
+<h2 style="font-size:18px">Live shop search</h2>
+<div class="row"><input id="q" placeholder="Search your shops" aria-label="Search query"><button class="b" id="go">Search shops</button><button class="b g" id="adb">Open Airsoftdb</button></div>
+<p class="hint" id="status"></p><div class="items" id="res"></div>
+<details open><summary>Shops to search</summary><p class="hint">Tick the shops to include. After a search each shows how many results it returned.</p><div id="shops"></div></details></section>
+
+<section class="box"><h2>Loadout sheet</h2>
+<div class="stats"><div class="stat"><b id="sCost"></b><span>Total cost</span></div><div class="stat"><b id="sW"></b><span>Known weight</span></div></div>
+<p class="warn" id="warn"></p><ul id="sheet"></ul>
+<div class="row"><input id="lname" placeholder="Loadout name" aria-label="Loadout name"><button class="b" id="save">Save</button></div>
+<div class="row"><button class="b g" id="copy">Copy kit list</button><button class="b g" id="clear">Clear all</button></div>
+<h2 style="font-size:18px;margin-top:12px">Saved loadouts</h2><div id="saved"></div>
+<p class="hint">Weight is not provided by shop search, so live results count as 0 g.</p></section>
+</main>
+<script>
+const api={
+ search:(q,ids)=>fetch("/api/search?q="+encodeURIComponent(q)+"&shops="+encodeURIComponent(ids.join(","))).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}),
+ rates:()=>fetch("https://api.frankfurter.dev/v1/latest?base=EUR&symbols=GBP,USD,CAD,AUD,SEK,JPY,CHF,CZK,PLN,DKK,NOK,HKD,SGD").then(r=>r.json()).catch(()=>null),
+ open:u=>window.open(u,"_blank","noopener")};
+</script>
+<script>
+const SLOTS=[["head","Headwear"],["eyes","Eye protection"],["face","Face cover"],["hands","Gloves"],["rig","Vest or carrier"],["primary","Primary"],["sidearm","Sidearm"],["feet","Boots"]];
+const HINT={head:"helmet",eyes:"goggles",face:"mesh mask",hands:"tactical gloves",rig:"plate carrier",primary:"AEG",sidearm:"GBB pistol",feet:"tactical boots"};
+const CURS=["GBP","EUR","USD","CAD","AUD","SEK","JPY","CHF","CZK","PLN","DKK","NOK","HKD","SGD"];
+const SAMPLE={head:[["Bump helmet","Emerson",38,780],["FAST replica helmet","Matrix",55,900],["Boonie hat","Kombat UK",12,90]],eyes:[["Mesh goggles","Valken",20,110],["Sealed ballistic goggles","Revision",65,150],["Full-seal goggles","Pyramex",32,140]],face:[["Lower mesh mask","Fma",9,60],["Half-face skull mask","Emerson",14,90]],hands:[["Full-finger gloves","Mechanix",28,110],["Half-finger gloves","Viper",16,80]],rig:[["Plate carrier","Viper VX",75,1400],["Chest rig","Condor",35,650],["Battle belt","Warrior",48,900]],primary:[["M4 AEG","G&G",155,2800],["AK AEG","Cyma",120,3300],["SMG AEG","Specna Arms",180,2500]],sidearm:[["Glock-style GBB","Tokyo Marui",125,700],["Spring pistol","Well",18,350]],feet:[["Combat boots","Magnum",65,1300],["Trail shoes","Salomon",95,780]]};
+const FALLBACK={EUR:1,GBP:.85,USD:1.08,CAD:1.5,AUD:1.65,SEK:11.2,JPY:165,CHF:.95,CZK:24.5,PLN:4.25,DKK:7.46,NOK:11.7,HKD:8.4,SGD:1.45};
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let cat={},pick={},sel="head",rates={...FALLBACK},cur=load("cur","GBP"),shops=[],enabled=load("enabled",null),report={},saved=load("loadouts",[]),found=[];
+SLOTS.forEach(([id])=>cat[id]=(SAMPLE[id]||[]).map(a=>({name:a[0],brand:a[1],price:a[2],cur:"GBP",weight:a[3],source:"Sample"})));
+const conv=(p,c)=>p/(rates[c]||1)*rates[cur];
+const money=v=>{try{return new Intl.NumberFormat(undefined,{style:"currency",currency:cur,maximumFractionDigits:cur==="JPY"?0:2}).format(v)}catch(e){return cur+" "+v.toFixed(2)}};
+const price=it=>money(conv(it.price,it.cur));
+const find=s=>cat[s][pick[s]];
+const link=it=>it.url||"https://www.google.com/search?q="+encodeURIComponent(it.brand+" "+it.name);
+const card=(it,i,cls)=>`<button class="item ${cls||""}" data-i="${i}"><span>${esc(it.name)}</span><span class="price">${price(it)}</span><span class="m">${esc(it.brand)} from ${esc(it.source)}${it.inStock===false?" (out of stock)":""}</span><span class="w">${it.weight?it.weight+" g":"weight n/a"}</span></button>`;
+
+function render(){
+  const mk=([id,l])=>{const it=find(id);return `<button class="slot ${sel===id?"on":""} ${it?"has":""}" data-slot="${id}"><b>${l}</b><span>${it?esc(it.brand+" "+it.name):"Empty"}</span></button>`};
+  $("#colL").innerHTML=SLOTS.slice(0,4).map(mk).join("");$("#colR").innerHTML=SLOTS.slice(4).map(mk).join("");
+  document.querySelectorAll("svg [data-s]").forEach(e=>{e.classList.toggle("on",e.dataset.s===sel);e.classList.toggle("has",pick[e.dataset.s]!==undefined)});
+  $("#catTitle").textContent=SLOTS.find(s=>s[0]===sel)[1];
+  $("#items").innerHTML=cat[sel].map((it,i)=>card(it,i,pick[sel]===i?"picked":"")).join("");
+  $("#res").innerHTML=found.map((it,i)=>card(it,i,"")).join("");
+  let cost=0,g=0,rows="";
+  SLOTS.forEach(([id])=>{const it=find(id);if(it){cost+=conv(it.price,it.cur);g+=it.weight;rows+=`<li><span>${esc(it.brand+" "+it.name)}</span><span>${price(it)}</span></li>`}});
+  $("#sheet").innerHTML=rows||"<li><span>No gear picked yet</span></li>";
+  $("#sCost").textContent=money(cost);$("#sW").textContent=(g/1000).toFixed(1)+" kg";
+  const w=$("#warn");if(pick.eyes===undefined){w.className="warn";w.textContent="Add eye protection. Sites require it on the field."}
+  else if(pick.primary===undefined){w.className="warn ready";w.textContent="Eyes covered. Choose a primary to finish the kit."}else{w.className="warn ready";w.textContent="Kit has the essentials."}
+  const gr={};shops.forEach(x=>(gr[x.region]=gr[x.region]||[]).push(x));const en=enabled||[];
+  $("#shops").innerHTML=Object.keys(gr).map(r=>`<p class="hint" style="margin-top:8px"><b>${esc(r)}</b></p>`+gr[r].map(x=>`<label class="shop"><input type="checkbox" data-shop="${x.id}" style="flex:none" ${en.includes(x.id)?"checked":""}><span>${esc(x.name)} (${x.cur})</span><span class="hint">${esc(report[x.id]||"")}</span></label>`).join("")).join("")||"<p class='hint'>Loading shops...</p>";
+  $("#saved").innerHTML=saved.map((s,i)=>`<div class="saved"><span>${esc(s.name)}</span><span><button class="b g" data-load="${i}">Load</button> <button class="b g" data-del="${i}">Delete</button></span></div>`).join("")||"<p class='hint'>Nothing saved yet.</p>";
+}
+function setSlot(s){sel=s;$("#q").value=HINT[s];found=[];$("#status").textContent="";render()}
+document.addEventListener("click",e=>{
+  const t=e.target,s=t.closest("[data-slot]"),p=t.closest("svg [data-s]");
+  if(s)return setSlot(s.dataset.slot);if(p)return setSlot(p.dataset.s);
+  const r=t.closest("#res .item");if(r){const it=found[+r.dataset.i];cat[sel].push(it);pick[sel]=cat[sel].length-1;return render()}
+  const i=t.closest("#items .item");if(i){const n=+i.dataset.i;pick[sel]===n?delete pick[sel]:pick[sel]=n;return render()}
+  if(t.dataset.load!==undefined){pick={};const sv=saved[+t.dataset.load];Object.keys(sv.items).forEach(k=>{cat[k].push(sv.items[k]);pick[k]=cat[k].length-1});render()}
+  if(t.dataset.del!==undefined){saved.splice(+t.dataset.del,1);store("loadouts",saved);render()}
+});
+$("#go").onclick=async()=>{
+  const q=$("#q").value.trim();if(!q)return;
+  if(!(enabled&&enabled.length)){$("#status").innerHTML='<span class="err">Tick at least one shop first.</span>';return}
+  $("#status").textContent="Searching "+enabled.length+" shop(s)...";
+  try{const r=await api.search(q,enabled);found=r.items;report={};(r.report||[]).forEach(x=>report[x.id]=x.ok?"✓ "+x.count+" results":"✗ "+x.error);
+    $("#status").textContent=r.items.length+" result(s). Click one to add it to this slot."}
+  catch(e){$("#status").innerHTML='<span class="err">Search failed. Wait a moment and try again.</span>'}
+  render();
+};
+document.addEventListener("change",e=>{const id=e.target.dataset.shop;if(!id)return;enabled=e.target.checked?[...new Set([...(enabled||[]),id])]:(enabled||[]).filter(x=>x!==id);store("enabled",enabled)});
+$("#q").onkeydown=e=>{if(e.key==="Enter")$("#go").click()};
+$("#adb").onclick=()=>{try{navigator.clipboard.writeText($("#q").value)}catch(e){}api.open("https://www.airsoftdb.com/");$("#status").textContent="Query copied. Paste it into the Airsoftdb search box."};
+$("#save").onclick=()=>{const items={};Object.keys(pick).forEach(k=>items[k]=find(k));saved.push({name:$("#lname").value.trim()||"Loadout "+(saved.length+1),items});store("loadouts",saved);$("#lname").value="";render()};
+$("#clear").onclick=()=>{pick={};render()};
+$("#copy").onclick=()=>{const t=SLOTS.filter(([id])=>find(id)).map(([id,l])=>{const it=find(id);return `${l}: ${it.brand} ${it.name} (${price(it)})`}).join("\n")+"\nTotal: "+$("#sCost").textContent;try{navigator.clipboard.writeText(t)}catch(e){}};
+$("#cur").innerHTML=CURS.map(c=>`<option>${c}</option>`).join("");$("#cur").value=cur;
+$("#cur").onchange=e=>{cur=e.target.value;store("cur",cur);render()};
+$("#fx").textContent="Using offline rates";
+api.rates().then(r=>{if(r&&r.rates){rates={EUR:1,...r.rates};$("#fx").textContent="Rates from "+r.date;render()}});
+fetch("/api/shops").then(r=>r.json()).then(l=>{shops=l;if(!enabled)enabled=l.filter(x=>x.default).map(x=>x.id);render()}).catch(()=>{$("#status").textContent="Could not load the shop list."});
+setSlot("head");
+</script></body></html>
